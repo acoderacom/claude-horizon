@@ -22,7 +22,7 @@ All rules below are user decisions. Do not re-litigate them.
 
 ## How to edit a theme file (in this order)
 1. **IMPORTANT:** Check the live copy first. The live theme in Shopify is the source of truth, not the local `theme/` folder, and the theme editor can change files at any time. If the local file and its live copy differ, sync the local file from the shop (pull live, overwrite local). Never push a local file over a newer live one. The theme editor rewrites `templates/*.json`, `sections/*-group.json` and `config/settings_data.json` on every save: pull those right before editing and keep every key you did not mean to change (`THEME.md` §4.1).
-2. Once per task, check the version: the live `config/settings_schema.json` must report `theme_version` [agent: insert the Horizon version THEME.md covers], the version `THEME.md` covers. If it does not, follow `THEME.md` §0.1 before relying on `THEME.md`.
+2. Once per task, check the version: the live `config/settings_schema.json` must report `theme_version` [agent: insert the Horizon version THEME.md covers], the version `THEME.md` covers. If it does not, stop and follow `THEME.md` §0.1 (run setup again).
 3. Edit the local file in `theme/`, following `THEME.md`.
 4. Validate before pushing: run `shopify-dev-mcp` `validate_theme` on the changed files in the local `theme/` folder and fix what it finds. Before "fixing" a finding in a stock file, compare it with the known stock findings in `THEME.md` §17.2.
 5. Push the file's content, so local and live stay in sync. Push one file at a time. When a change has several files, push the files others depend on first: locale keys, assets and snippets, then blocks, then sections, then templates.

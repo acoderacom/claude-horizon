@@ -14,9 +14,9 @@
 
 ### 0.1 Version gate (once per task)
 
-1. Read `config/settings_schema.json` `[0].theme_version`.
+1. Read the live `config/settings_schema.json` `[0].theme_version`.
 2. `== "4.2.0"`: this spec applies.
-3. Otherwise every `path:line`, count, setting ID and catalog entry below may be stale. Re-verify each fact against source before acting, then update this file and the version line in `customizations.md`. Never "fix" code to match a stale spec.
+3. Otherwise stop: edit no theme files, and do not update this file to match. Tell the user the live theme is Horizon <live version> while this project's docs cover 4.2.0, and to run setup again (`npx -y @acodera/shopify-admin-mcp@latest setup`, **Full theme design**). Setup moves the project to the live version when the template supports it, or says which version to switch the store to.
 4. `release-notes.md` lists what 4.2.0 changed (RTL `dir` attribute, logical start/end alignment values, cart bfcache fixes).
 
 ### 0.2 Labels
@@ -1102,8 +1102,8 @@ Semantic HTML and native keyboard behavior first; ARIA only for what native sema
 ### 17.1 Checklist (every change)
 
 1. Read changed Liquid, schema, locale, CSS and JS together: IDs, settings, refs, selectors, events, loading paths agree.
-2. `validate_theme` (shopify-dev-mcp) on every created/changed file: `learn_shopify_api(api: "liquid")` for a `conversationId`, then `validate_theme(conversationId, absoluteThemePath, filesCreatedOrUpdated: [{path}])` with theme-relative paths. Fix errors and warnings; re-run with the same `artifactId` and incremented `revision`. It reads local files only: validate a local theme directory containing the changed files (for live-only edits, a scratch copy of the theme root plus the changed files and the locale keys they reference).
-3. Compare findings on stock files with §17.2 before "fixing". `validate_theme` runs Theme Check; `shopify theme check` is the equivalent full run where the CLI is permitted.
+2. `validate_theme` (shopify-dev-mcp) on every created/changed file: `learn_shopify_api(api: "liquid")` for a `conversationId`, then `validate_theme(conversationId, absoluteThemePath, filesCreatedOrUpdated: [{path}])` with theme-relative paths. Fix errors and warnings; re-run with the same `artifactId` and incremented `revision`. It reads local files only: validate the project's `theme/` folder, where every change is made first (`CLAUDE.md`).
+3. Compare findings on stock files with §17.2 before "fixing". `validate_theme` runs Theme Check, so no CLI is needed.
 4. Preview affected templates: desktop + narrow viewport; theme editor (add, remove, reorder, select; every setting; empty and populated states); after interactions (filtering, variant change, first Quick Add open, cart drawer, section re-render); non-default locale / RTL when relevant.
 5. Interactions: keyboard and pointer, focus movement, live feedback, reduced motion, delayed module loading, request failure, repeated section rendering.
 6. Record the change (§2.4). Report each unavailable check (validation, preview, store auth, representative data) with the exact command or inspection to run next.
