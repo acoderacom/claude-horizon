@@ -62,8 +62,6 @@ Setup then:
 
 Running it again keeps `customizations.md` and your own changes to `CLAUDE.md`, and asks before replacing `theme/` or `THEME.md`.
 
-The `horizon-4.2.0` tag keeps the earlier flat layout for setup 1.5 and 1.6.
-
 ### By hand
 
 Copy `CLAUDE.md`, `customizations.md` and the `THEME.md` for your Horizon version into your project folder, next to a `theme/` folder holding that version. Then fill in the `[agent: …]` placeholders; you can ask Claude to do it.
