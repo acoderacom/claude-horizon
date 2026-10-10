@@ -1,7 +1,5 @@
 # Project: Shopify theme design work
 
-The user is non-technical. Explain in plain language and avoid jargon.
-
 All rules below are user decisions. Do not re-litigate them.
 
 ## Store
@@ -11,7 +9,7 @@ All rules below are user decisions. Do not re-litigate them.
 
 ## Files in this folder
 - `theme/`: local copy of the live theme.
-- `THEME.md`: technical spec of stock Horizon [agent: insert the Horizon version THEME.md covers] for agents: how the theme is built and how to customize it. The single source of truth for theme work. If it and this file disagree, this file wins for workflow, store access and deployment; `THEME.md` wins for how the theme works (`THEME.md` §0.3).
+- `THEME.md`: technical spec of stock Horizon [agent: insert the Horizon version THEME.md covers] for agents: how the theme is built and how to customize it. The single source of truth for theme work. If it and this file disagree, this file wins for workflow, store access, deployment and its design rules; `THEME.md` wins for how the theme works and how to build within those rules (`THEME.md` §0.3).
 - `customizations.md`: log of every change made to the theme.
 - `.mcp.json`: setup for the `shopify-admin-mcp` connection (package `@acodera/shopify-admin-mcp`), including its access key. Never print or share the key. Live-theme writes are switched on; local file uploads are only allowed from `uploads/`. Also sets up `shopify-dev-mcp` (Shopify's docs and code checker; it reads local files and never touches the shop).
 - `uploads/`: the only folder `shopify-admin-mcp` may upload local files from (images, PDFs) into the store's Files library. Put files here before uploading; never point uploads at the project folder, which holds the access key.
@@ -19,7 +17,7 @@ All rules below are user decisions. Do not re-litigate them.
 ## Connecting to the shop
 - **IMPORTANT:** Only use the local `shopify-admin-mcp` MCP server to talk to the shop. Never use the claude.ai Shopify connector, even if it shows as connected.
 - Theme edits go straight to the live theme through `shopify-admin-mcp` (`shopify_theme_files_upsert`, which runs GraphQL `themeFilesUpsert`). Never use its `shopify_theme_duplicate` or `shopify_theme_delete` tools. Store data (products, collections, metafields, metaobjects) also goes through `shopify-admin-mcp`.
-- No git. No Shopify CLI. No draft or duplicate theme.
+- No git. No Shopify CLI. No draft or duplicate theme. That rules out updating Horizon to a new version here, since an update installs the new version as an unpublished copy: if the user asks for one, explain this and stop.
 - The access key has full access to the store: themes, products, collections, metafields, metaobjects, files, pages, blogs, navigation menus, translations, markets, discounts, inventory, orders, customers, checkout, shipping and payments settings. Because a mistake can affect real store data, only change what the task needs. Ask the user before touching orders, customers, payments, checkout or shipping, and before deleting anything.
 
 ## How to edit a theme file (in this order)
@@ -34,9 +32,9 @@ All rules below are user decisions. Do not re-litigate them.
 ## Design rules
 - Follow the ladder in `THEME.md` §2.1: store data, theme settings, and existing sections and blocks come before any code. When code is needed, the order in the rules below applies (a new theme block before a stock edit, unless the edit is a small addition).
 - Prefer settings changes (`config/settings_data.json`) over Liquid edits.
-- **IMPORTANT:** Build with Horizon's theme blocks. First use what exists: settings, and existing sections filled with existing theme blocks (`section`, `group`, `text`, `image`, `button`, … and their presets; `THEME.md` levels L1–L3). Only write code when that cannot do the job, and say why.
-- **IMPORTANT:** When code is needed, make a new `cx-` theme block (L6, `THEME.md` §2.2). It plugs into every stock section that accepts theme blocks without editing them, and on a Horizon update it is copied over as is. Edit a stock file (L5) only for a small addition to the file that already does the job, because every stock edit must be merged again by hand into each new Horizon version. Build a new `cx-` section (L7) only for a page-level region that sections plus blocks cannot express.
-- For anything at L4–L8 (custom Liquid, stock code edits, new code), write the justification from `THEME.md` §2.3 in `customizations.md` before writing code. Name every new block, section, snippet, asset, CSS class and custom element with the `cx-` prefix, and put new locale keys under `cx.` (`THEME.md` §2.5). New page templates keep a plain name the merchant can read (for example `page.faq.json`).
+- **IMPORTANT:** Build with Horizon's theme blocks. First use what exists: settings, and existing sections (such as the generic `section` and its presets) filled with existing theme blocks (`group`, `text`, `image`, `button`, … and their presets; `THEME.md` levels L1–L3). Only write code when that cannot do the job, and say why.
+- **IMPORTANT:** When code is needed, make a new public `cx-` theme block with a preset (L6, `THEME.md` §2.2). It plugs into every stock section and block that accepts any theme block (`@theme`, `THEME.md` §3.6) without editing them, and on a Horizon update it is copied over as is. Edit a stock file (L5) only for a small addition to the file that already does the job, because every stock edit must be merged again by hand into each new Horizon version. Build a new `cx-` section (L7) only for a page-level region that sections plus blocks cannot express.
+- For anything at L4–L8 (custom Liquid, stock code edits, new code), write the justification from `THEME.md` §2.3 in `customizations.md` before writing code. Name every new block, section, snippet, asset, CSS class and custom element with the `cx-` prefix (`_cx-` for private blocks), and put new locale keys under `cx.` (`THEME.md` §2.5). New page templates keep a plain name the merchant can read (for example `page.faq.json`).
 - Leave `assets/base.css` stock. Global CSS rules go in a small custom stylesheet (see `THEME.md` §9.9: `assets/cx-theme.css`).
 
 ## Logging changes
