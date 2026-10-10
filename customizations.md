@@ -1,4 +1,4 @@
-# Theme changes (how this theme differs from stock Horizon 4.2.0)
+# Theme changes (how this theme differs from stock Horizon [agent: insert the Horizon version THEME.md covers])
 
 This is the only record of how this theme differs from stock Horizon, apart from merchant edits made in the theme editor (`THEME.md` §2.4).
 Every change made to theme files is logged here in the same task it is made.
@@ -13,7 +13,7 @@ The order to work in (`CLAUDE.md` design rules, `THEME.md` §2.1–§2.2):
 
 Keep "Modified stock files" short: every entry there must be redone by hand on each Horizon update, while "New custom code" is copied over as is.
 
-Horizon version of this theme: **4.2.0** (`config/settings_schema.json` → `theme_version`).
+Horizon version of this theme: **[agent: insert the Horizon version THEME.md covers]** (`config/settings_schema.json` → `theme_version`).
 
 Two kinds of file are tracked:
 

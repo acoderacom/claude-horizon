@@ -11,7 +11,7 @@ All rules below are user decisions. Do not re-litigate them.
 
 ## Files in this folder
 - `theme/`: local copy of the live theme.
-- `THEME.md`: technical spec of stock Horizon 4.2.0 for agents: how the theme is built and how to customize it. The single source of truth for theme work. If it and this file disagree, this file wins for workflow, store access and deployment; `THEME.md` wins for how the theme works (`THEME.md` §0.3).
+- `THEME.md`: technical spec of stock Horizon [agent: insert the Horizon version THEME.md covers] for agents: how the theme is built and how to customize it. The single source of truth for theme work. If it and this file disagree, this file wins for workflow, store access and deployment; `THEME.md` wins for how the theme works (`THEME.md` §0.3).
 - `customizations.md`: log of every change made to the theme.
 - `.mcp.json`: setup for the `shopify-admin-mcp` connection (package `@acodera/shopify-admin-mcp`), including its access key. Never print or share the key. Live-theme writes are switched on; local file uploads are only allowed from `uploads/`. Also sets up `shopify-dev-mcp` (Shopify's docs and code checker; it reads local files and never touches the shop).
 - `uploads/`: the only folder `shopify-admin-mcp` may upload local files from (images, PDFs) into the store's Files library. Put files here before uploading; never point uploads at the project folder, which holds the access key.
@@ -24,7 +24,7 @@ All rules below are user decisions. Do not re-litigate them.
 
 ## How to edit a theme file (in this order)
 1. **IMPORTANT:** Check the live copy first. The live theme in Shopify is the source of truth, not the local `theme/` folder, and the theme editor can change files at any time. If the local file and its live copy differ, sync the local file from the shop (pull live, overwrite local). Never push a local file over a newer live one. The theme editor rewrites `templates/*.json`, `sections/*-group.json` and `config/settings_data.json` on every save: pull those right before editing and keep every key you did not mean to change (`THEME.md` §4.1).
-2. Once per task, check the version: the live `config/settings_schema.json` must report `theme_version` 4.2.0, the version `THEME.md` covers. If it does not, follow `THEME.md` §0.1 before relying on `THEME.md`.
+2. Once per task, check the version: the live `config/settings_schema.json` must report `theme_version` [agent: insert the Horizon version THEME.md covers], the version `THEME.md` covers. If it does not, follow `THEME.md` §0.1 before relying on `THEME.md`.
 3. Edit the local file in `theme/`, following `THEME.md`.
 4. Validate before pushing: run `shopify-dev-mcp` `validate_theme` on the changed files in the local `theme/` folder and fix what it finds. Before "fixing" a finding in a stock file, compare it with the known stock findings in `THEME.md` §17.2.
 5. Push the file's content, so local and live stay in sync. Push one file at a time. When a change has several files, push the files others depend on first: locale keys, assets and snippets, then blocks, then sections, then templates.

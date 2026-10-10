@@ -1,0 +1,9 @@
+{
+  "current": "4.2.0",
+  "versions": {
+    "4.2.0": {
+      "status": "supported",
+      "horizonCommit": "f9aef27cd24723119fca896eea43bdeda9961022"
+    }
+  }
+}
