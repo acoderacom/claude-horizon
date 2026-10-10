@@ -10,6 +10,41 @@
 | Scope | Stock Horizon 4.2.0 files. Paths are relative to the theme root (the folder holding `config/settings_schema.json`); every `path:line` points at stock 4.2.0. |
 | Audience | AI coding agents. Terse, normative. |
 
+## How to read this file
+
+MUST NOT read this file whole. Read by section:
+
+1. Always: from the top to the `## 3.` heading (this map and §0–§2).
+2. Every change: §18 before choosing how to build it; §17 before and after pushing.
+3. Then only the sections the map lists for the task. Follow a `§` reference only when the task needs what it points to.
+
+Get every heading's line number with one search (`grep -n '^##' THEME.md`), then read from a heading to the next one. For one name (block type, section, setting ID, snippet, token, class, event), search for the name instead of reading a whole catalog. This file maps the source; still read every theme file a change touches (§1).
+
+| § | Covers | Read when |
+|---|---|---|
+| 0 | Version gate, labels, precedence, golden rules | Always |
+| 1 | Render tree, folders | Always |
+| 2 | Ladder L0–L8, justification record, change log, `cx-` naming, do-not list | Always |
+| 3 | Theme blocks: kinds, targeting, `content_for`, static vs dynamic, `closest.*`, which containers accept which blocks (§3.6), nesting, saved-data contract | Adding, nesting or listing blocks (L3, L5, L6) |
+| 4 | Template and section-group JSON: ownership, format, stock templates, groups | Editing `templates/*.json` or `sections/*-group.json`; alternate templates |
+| 5 | Sections: generic `section` and its presets, section skeleton, catalog, header (§5.4) | Choosing a stock section; writing a `cx-` section (L7); header work |
+| 6 | Blocks: authoring conventions, standard setting groups, public and private catalogs, parent coupling, schema rules, Liquid style | Choosing a stock block; writing or editing a block (L5, L6) |
+| 7 | `layout/theme.liquid` render order, shell facts, editing layouts | Editing `layout/`; page width, scroll container, page-wide markup |
+| 8 | Snippets: style helpers, component renderers, style owners | Rendering buttons, media, prices, icons and the like; writing a snippet |
+| 9 | CSS: layers, rules, tokens, global classes, typography, spacing, CSS for a `cx-` block, global CSS (§9.9) | Writing any CSS |
+| 10 | Color model, `contrast-override`, color-aware CSS | Color settings or color CSS |
+| 11 | Every `config/settings_schema.json` group and setting ID | Theme settings (L1); reading `settings.*`; editing `settings_schema.json` |
+| 12 | JavaScript: loading and import map, `Component`, events, section rendering, theme editor, utilities | Writing or changing any JS |
+| 13 | Product page, featured product, product cards, collection and search, cart, quick add, metafields and dynamic sources | Work on any of these |
+| 14 | Storefront and editor strings, `cx.` locale keys | Adding text shoppers or merchants see |
+| 15 | Accessibility | Changing markup or interaction |
+| 16 | Performance: images, loops, deferred content | Adding images, loops or deferred content |
+| 17 | Verification checklist; `validate_theme` findings in stock files | Every change |
+| 18 | Recipes: common need → level and stock pieces | Every change |
+| 19 | Known stock defects and quirks | Copying stock code; before "fixing" stock code that looks wrong |
+| 20 | Keys of the PLATFORM labels → shopify.dev URLs | Checking the docs behind a PLATFORM label |
+| A | Code templates: A.1 leaf block, A.2 interactive block + JS module, A.3 section, A.4 locale keys, A.5 template JSON | Writing that kind of file |
+
 ## 0. Version gate, labels, precedence
 
 ### 0.1 Version gate (once per task)

@@ -10,6 +10,7 @@ All rules below are user decisions. Do not re-litigate them.
 ## Files in this folder
 - `theme/`: local copy of the live theme.
 - `THEME.md`: technical spec of stock Horizon [agent: insert the Horizon version THEME.md covers] for agents: how the theme is built and how to customize it. The single source of truth for theme work. If it and this file disagree, this file wins for workflow, store access, deployment and its design rules; `THEME.md` wins for how the theme works and how to build within those rules (`THEME.md` §0.3).
+  - Never read `THEME.md` whole. Read it from the top through §2, then only the sections its map ("How to read this file", at the top) lists for the task.
 - `customizations.md`: log of every change made to the theme.
 - `.mcp.json`: setup for the `shopify-admin-mcp` connection (package `@acodera/shopify-admin-mcp`), including its access key. Never print or share the key. Live-theme writes are switched on; local file uploads are only allowed from `uploads/`. Also sets up `shopify-dev-mcp` (Shopify's docs and code checker; it reads local files and never touches the shop).
 - `uploads/`: the only folder `shopify-admin-mcp` may upload local files from (images, PDFs) into the store's Files library. Put files here before uploading; never point uploads at the project folder, which holds the access key.

@@ -11,7 +11,7 @@ claude-horizon/
    └─ 4.2.0/THEME.md        technical spec of stock Horizon 4.2.0
 ```
 
-`CLAUDE.md` and `customizations.md` are shared by every version. `THEME.md` describes exactly one Horizon version, so each supported version has its own folder.
+`CLAUDE.md` and `customizations.md` are shared by every version. `THEME.md` describes exactly one Horizon version, so each supported version has its own folder. It's long, so it opens with a section map, and `CLAUDE.md` tells Claude to read it by section rather than whole.
 
 ## Versions
 
@@ -37,7 +37,7 @@ Usually only `current` is supported. During a move to a new version, mark both a
 
 ### Adding a Horizon version
 
-1. Write `versions/<version>/THEME.md` for the new version, and add the version to `versions.json` as `draft`.
+1. Write `versions/<version>/THEME.md` for the new version, and add the version to `versions.json` as `draft`. Keep its section map ("How to read this file") in step with its `##` headings.
 2. When the spec is ready, set it to `supported` with its `horizonCommit`, and make it `current`.
 3. Retire the old version once stores have moved.
 
