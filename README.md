@@ -55,7 +55,7 @@ Setup then:
 2. asks for your store and credentials, and checks them;
 3. compares your store's live theme with the supported versions:
    - if it matches, setup goes on with that version;
-   - if it's older, newer or not Horizon, setup says so and stops without writing anything. The Shopify theme store only installs the newest Horizon, so setup offers to save an upload-ready `horizon-<current>.zip` for you to upload in the Shopify admin (**Online Store → Themes → Add theme → Upload zip file**) and publish;
+   - if it's older, newer or not Horizon, setup says which version to switch to and stops without setting up the project. The Shopify theme store only installs the newest Horizon, so setup offers to save an upload-ready `horizon-<current>.zip` in the folder, for you to upload in the Shopify admin (**Online Store → Themes → Add theme → Upload zip file**) and publish;
 4. downloads that Horizon version into `theme/`;
 5. writes `CLAUDE.md`, `THEME.md` and `customizations.md`, filling in the `[agent: …]` placeholders: the store, the live theme's version and ID, the storefront password, and the Horizon version;
 6. writes `.mcp.json` with the settings `CLAUDE.md` expects: live theme writes, uploads from `uploads/`, and the Shopify Dev MCP.
