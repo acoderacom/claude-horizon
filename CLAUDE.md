@@ -42,5 +42,14 @@ All rules below are user decisions. Do not re-litigate them.
 - For L4–L8, write the `THEME.md` §2.3 justification in `customizations.md` before writing code.
 - Name every new block, section, snippet, asset, CSS class and custom element with the `cx-` prefix (`_cx-` for private blocks), and put new locale keys under `cx.` (`THEME.md` §2.5). New page templates keep a plain name the merchant can read (for example `page.faq.json`).
 
+## Designing a mockup
+- Design first: don't limit a mockup to what stock Horizon can do. Design both desktop and phone widths.
+- Every band carries a Horizon map, shown by an overlay the user can switch on:
+  - `data-horizon`: the stock section, its preset, its blocks and the settings that produce the band (`THEME.md` §5.3, §6.3, §11).
+  - `data-code` for anything stock can't produce: the level (`THEME.md` §2.1), the `cx-` file or `cx_style` value, and in one line why stock can't do it.
+- Before calling the mockup ready, check every `data-horizon` claim against the stock source in `theme/`. Fix the notes, not the design.
+- Use the theme's color palette names (`THEME.md` §10) and fonts from Shopify's font library, and flag any that aren't there.
+- A design made elsewhere (Claude Design, Figma, a screenshot): before building, write the same map as a list, band by band, and show it to the user with the bands that need custom code and the places where stock gets close but not exact.
+
 ## Logging changes
 - **IMPORTANT:** `customizations.md` must be updated in the same task as the change, for both kinds of change: (1) any edit to a stock Horizon file, and (2) any newly created custom code (section, block, snippet, asset, template). Record what its "How to write an entry" section asks: file, level, what it does or what changed, settings, why (with the `THEME.md` §2.3 justification for L4–L8), checks, and how to undo. It is the only record of how this theme differs from stock Horizon, apart from merchant edits made in the theme editor (`THEME.md` §2.4).

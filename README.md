@@ -4,7 +4,7 @@ Project docs for designing Shopify's [Horizon](https://github.com/Shopify/horizo
 
 ## Features
 
-- **Working rules** (`CLAUDE.md`): store access, editing and pushing theme files, design rules, and logging
+- **Working rules** (`CLAUDE.md`): store access, editing and pushing theme files, design rules, mockups with a Horizon map, and logging
 - **A spec for each Horizon version** (`versions/<version>/THEME.md`): how the theme is built and how to customize it, with a section map so Claude reads only the sections a task needs
 - **Change log** (`customizations.md`): how the theme differs from stock Horizon, ready to carry over to a new version
 - **Version index** (`versions.json`): the Horizon versions stores may run, so every store stays on a version the docs cover
