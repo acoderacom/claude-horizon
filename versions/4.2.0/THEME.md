@@ -126,7 +126,7 @@ User decision: **use Horizon as much as possible; custom code is allowed, but ev
 |---|---|---|---|---|
 | L0 | Store data: products, collections, metafields + definitions, metaobjects, menus, pages, Search & Discovery filters, apps | No | Yes | Content, navigation, filters, data for dynamic sources |
 | L1 | Global theme settings (`config/settings_data.json` `current`) | No | Yes | Palette, fonts, type scale, buttons, inputs, cards, badges, cart type, page width, animations |
-| L2 | Section/block settings on existing instances, incl. dynamic sources (`{{ closest.product.metafields.ns.key }}`) | No | Yes in `templates/*.json`; no in `sections/*-group.json` | Copy, media, layout, colors, spacing of one band or block |
+| L2 | Section/block settings on existing instances, incl. dynamic sources (`{{ closest.product.metafields.ns.key.value }}`) | No | Yes in `templates/*.json`; no in `sections/*-group.json` | Copy, media, layout, colors, spacing of one band or block |
 | L3 | Composition in JSON: add/remove/reorder/nest existing sections and blocks; presets; alternate templates `templates/<type>.<suffix>.json` | JSON only | Yes in `templates/*.json`; no in `sections/*-group.json` (only `settings_data.json` and `templates/*.json` are outside the update check, PLATFORM [UPD]) | New page layouts; new bands from `section` presets + `group`/`text`/`image`/`button`… |
 | L4 | `custom-liquid` block/section (Liquid stored as a setting value) | Liquid in data | Yes in `templates/*.json`; no in `sections/*-group.json` | A few lines of content-level Liquid (metafield print, embed). No `layout`/`section`/`javascript`/`stylesheet`/`schema` tags, no `content_for_*`, no `settings`, ≤50 KB (PLATFORM [IS]); `closest.*` inside it UNVERIFIED |
 | L5 | Small addition to a stock file that already owns the behavior | **Stock edit** | No: manual re-merge per update | Behavior change inside a component used everywhere |
@@ -1101,7 +1101,7 @@ Variant change (`assets/variant-picker.js`):
 - One card configuration per host instance, edited in that section's static `_product-card` (e.g. `templates/collection.json:122-215`).
 - `_product-card` children: `_product-card-gallery`, `product-title`, `price`, `text`, `image`, `review`, `sku`, `swatches`, `buy-buttons`, `custom-liquid`, `_product-card-group`, `@app`. **Not allowed:** `variant-picker`, `product-inventory`, `product-description`, `quantity`, `product-custom-property`, `button`, `icon`. Public `product-card` (own `product` setting) = same list minus `buy-buttons`. `buy-buttons` in cards duplicates form ids per section (stock behavior).
 - Badges: only sale (`compare_at_price > price`) and sold-out, styled by global badge settings, rendered by `_product-card-gallery`. **No badge block.** Custom badges: a `text` block (pill settings) bound to a metafield inside the static `_product-card` (L2/L3), or a `cx-` block when logic is needed (L6, plus an L5 edit listing it in `_product-card`, which has no `@theme`, §3.6).
-- Card data: `text` blocks with dynamic sources (`{{ closest.product.metafields.ns.key }}`, `{{ closest.product.vendor }}`); `closest.product` is supplied per card (`blocks/_product-card.liquid:10`).
+- Card data: `text` blocks with dynamic sources (`{{ closest.product.metafields.ns.key.value }}`, `{{ closest.product.vendor }}`); `closest.product` is supplied per card (`blocks/_product-card.liquid:10`).
 - Global card settings: `quick_add`, `mobile_quick_add`, `show_second_image_on_hover`, `product_card_carousel`, badges, `card_hover_effect`, `transition_to_main_product`, `currency_code_enabled_product_cards`.
 - `snippets/product-card.liquid` renders `product-card-styles`; `snippets/card-gallery.liquid` handles media, carousel, hover image, eager loading when `section.index` is nil or `< 5` (`:102`), `sizes` from host `section.settings` (safe fallback).
 - Reusing `_product-card` in a `cx-` section: render it statically in the loop with `closest.product: product`; provide `columns`/`layout_type` (or `product_card_size`) for accurate `sizes`; render the owners stock hosts render (`quick-add-styles`, `quick-add-modal-styles`, `swatch-styles`, `quantity-selector-styles`, `variant-picker-styles`, `buy-buttons-styles`, `product-badges-styles`; `sections/featured-product.liquid:13-19`).
@@ -1132,7 +1132,8 @@ Variant change (`assets/variant-picker.js`):
 
 ### 13.7 Metafields and dynamic sources
 
-- Prefer binding stock blocks to metafields (L2): `text` (`{{ closest.product.metafields.ns.key }}`), `image` (file reference), `button` link, `video`. Needs metafield definitions (L0).
+- Prefer binding stock blocks to metafields (L2): `text` (`{{ closest.product.metafields.ns.key.value }}`), `image` (file reference), `button` link, `video`. Needs metafield definitions (L0).
+- A dynamic source in a setting value names the metafield's value, so it ends in `.value`. Shopify refuses a template or section group whose setting names the metafield itself (`{{ closest.product.metafields.ns.key }}`) (PLATFORM [DS]).
 - Hard-coded readers: `review` (`reviews.rating`, `reviews.rating_count`), `disclosures` (`shopify.disclosure`), cart disclosure tooltip.
 - `custom-liquid` for formatting a dynamic source cannot express (L4); a `cx-` block when settings/CSS are needed (L6).
 - Metaobjects: `metaobject`/`metaobject_list` settings (type must exist and be storefront-visible) in a `cx-` block/section, or `templates/metaobject/<type>.json` for metaobject pages. No stock file uses either.
@@ -1147,7 +1148,8 @@ Variant change (`assets/variant-picker.js`):
 
 - Schema namespaces: `names`, `settings`, `options`, `content`, `info`, `categories`, `html_defaults`, `text_defaults`. Reuse stock keys for standard settings.
 - Custom keys: top-level `cx` object, `cx.<component>.<key>` (≤3 levels), in `en.default.json` (storefront) and/or `en.default.schema.json` (editor). Locale files are stock files: adding `cx` is an L8 stock edit; record it; re-apply after an update. Add the same keys to each storefront locale the shop publishes; schema-locale fallback to English is UNVERIFIED (keep editor labels in `en.default.schema.json` at least).
-- Never change a stock key's text, placeholders or meaning (shared contracts); add a `cx.*` key instead. Plain keys stay plain; `_html` only for markup.
+- Never change a stock key's placeholders or meaning, and never reuse one for something else (shared contracts); add a `cx.*` key instead. Plain keys stay plain; `_html` only for markup.
+- Rewording a storefront string to match the brand, with the same meaning and placeholders ("Add to cart" → "Add to bag"), is allowed: an L8 stock edit of `locales/en.default.json` and each storefront locale the shop publishes, recorded with the old and new text.
 - Theme Check `TranslationKeyExists`, `ValidSchemaTranslations` report missing keys. Both `en.default*` files carry a `/* */` header and `//` comments. Limits: ≤3,400 translations per file, ≤1,000 chars per value (PLATFORM [LOC]).
 
 ## 15. Accessibility
