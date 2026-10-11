@@ -27,8 +27,8 @@ Get every heading's line number with one search (`grep -n '^##' THEME.md`), then
 | 2 | Ladder L0–L8, justification record, change log, `cx-` naming, do-not list | Always |
 | 3 | Theme blocks: kinds, targeting, `content_for`, static vs dynamic, `closest.*`, which containers accept which blocks (§3.6), nesting, saved-data contract | Adding, nesting or listing blocks (L3, L5, L6) |
 | 4 | Template and section-group JSON: ownership, format, stock templates, groups | Editing `templates/*.json` or `sections/*-group.json`; alternate templates |
-| 5 | Sections: generic `section` and its presets, section skeleton, catalog, header (§5.4) | Choosing a stock section; writing a `cx-` section (L7); header work |
-| 6 | Blocks: authoring conventions, standard setting groups, public and private catalogs, parent coupling, schema rules, Liquid style | Choosing a stock block; writing or editing a block (L5, L6) |
+| 5 | Sections: generic `section` and its presets, section skeleton, catalog, header and its account component (§5.4) | Choosing a stock section; writing a `cx-` section (L7); header, account icon or sign-in work |
+| 6 | Blocks: authoring conventions, standard setting groups, public and private catalogs, parent coupling, schema rules, Liquid style and the strict parser (§6.7) | Choosing a stock block; writing or editing a block (L5, L6); writing any Liquid |
 | 7 | `layout/theme.liquid` render order, shell facts, editing layouts | Editing `layout/`; page width, scroll container, page-wide markup |
 | 8 | Snippets: style helpers, component renderers, style owners | Rendering buttons, media, prices, icons and the like; writing a snippet |
 | 9 | CSS: layers, rules, tokens, global classes, typography, spacing, CSS for a `cx-` block, global CSS (§9.9), where a style detail goes and the `cx_style` option (§9.10) | Writing any CSS; matching a design detail no setting covers |
@@ -203,6 +203,7 @@ Every stock-file edit and every new file MUST be recorded in `customizations.md`
 - MUST NOT branch on `block.id` / `section.id` values (Theme Check `BlockIdUsage` for `block.id`; same rule for `section.id`); use them only for scoping.
 - MUST NOT build on orphan private blocks (§6.4) without wiring them into a parent.
 - MUST NOT modify or wrap `{{ content_for_header }}`.
+- MUST NOT use the `{% block %}` or `{% partial %}` tags. They belong to Shopify's Liquid July '26 developer preview, work only on stores with that preview turned on, and fail everywhere else with an unknown-tag error (PLATFORM [PREV]). Theme blocks are placed with `content_for` (§3.3); parts of a page are refreshed with section rendering (§12.4).
 
 ## 3. Theme blocks: the system
 
@@ -240,7 +241,7 @@ Every stock-file edit and every new file MUST be recorded in `customizations.md`
 
 - Render the dynamic area once per file; `capture` it when several branches need it (`blocks/group.liquid:1-3`, `sections/section.liquid:1-3`).
 - Stock calls `content_for` only in sections and blocks. To place block output inside a snippet, capture it and pass the HTML (`sections/product-information.liquid:5-23` → `snippets/product-information-content.liquid` params `media_gallery`, `product_details`, `additional_blocks`). `content_for` inside a snippet: UNVERIFIED.
-- Keyword args on a static block become plain variables in the block; declare them with `@param` in its `{% doc %}`. Filters on `content_for` args are ignored → `assign` first (Theme Check `UnsupportedFilterArguments`). Reserved param names: `attributes, block, blocks, class, context, id, inherit, resource, resources, schema, section, sections, settings, snippet, snippets, src, style, styles, template, templates, type`.
+- Keyword args on a static block become plain variables in the block; declare them with `@param` in its `{% doc %}`. Filters on `content_for` args are not applied (Theme Check `UnsupportedFilterArguments`, which `validate_theme` did not report when checked on 2026-10-11) and break the strict parser (§6.7) → `assign` first. Reserved param names: `attributes, block, blocks, class, context, id, inherit, resource, resources, schema, section, sections, settings, snippet, snippets, src, style, styles, template, templates, type`.
 - A block sees `block`, the rendering `section`, globals and static keyword args; never caller-local variables.
 
 ### 3.4 Static vs dynamic
@@ -529,6 +530,11 @@ Resource lists (`collection-list`, `main-collection-list`, `product-list`, `feat
 - Sticky: `enable_sticky_header` always|scroll-up|never → `sticky` attribute; `data-sticky-state` from `assets/header.js`.
 - Transparent: per-template toggles (home/product/collection) → `transparent` attribute, inverse logo; `--header-height`, `--header-group-height`, `--transparent-header-offset-boolean` measured by `layout/theme.liquid:45-135`. New first-paint consumers of those vars MUST `render 'measure-header-heights'`.
 - Hydration: `hydrate(section.id)` re-renders the header after load; only `data-hydration-key` targets (`header-menu`, `header-drawer-mobile`, `header-menu-mobile-navigation-bar`) are morphed. Menu featured products are queried only on that second render (`section.index == blank`, `snippets/mega-menu-list.liquid:29-41`).
+- Account: when `shop.customer_accounts_enabled`, `snippets/header-actions.liquid:66-114` renders Shopify's `<shopify-account>` component with `menu` from the header's `customer_account_menu` setting (default `customer-account-main-menu`). Shopify controls the component and its account sheet (sign-in options, menu links, signed-in avatar) and updates them independently of the theme; legacy-account shops get a plain link to the sign-in page (PLATFORM [ACC]). The theme sets only:
+  - the signed-out avatar: the `signed-out-avatar` slot (stock: text label and icon per `actions_display_style`) and `::part(signed-out-avatar)`;
+  - the sheet's look: `--shopify-account-*` custom properties (fonts, font weights and transforms, radii, background, text, accent, control, shadow and signed-in avatar colors and size, dialog offset). Stock maps them from theme tokens at `:167-181`: fonts from the type settings, radii from popover and primary-button radii, background and text from the popover scope (`color-custom-popover`, §10.1), accent from the primary button, dialog top from `--header-height`. `assets/base.css:57-64` also shifts `shopify-account::part(dialog)` while a theme drawer is open; that part isn't in Shopify's docs (UNVERIFIED as a stable hook), so leave it to stock.
+
+  Match a design's account sheet through the theme settings behind those tokens first, then the remaining `--shopify-account-*` properties, set site-wide in `assets/cx-theme.css` (`:root shopify-account { … }`, §9.9, §9.10); never rebuild the sheet or style inside the component. Name anything those cannot reach to the user (§17.1). Account pages (orders, profile) and the sign-in page are Shopify-hosted customer accounts, styled in the checkout and accounts editor, not theme files: stock ships no `templates/customers/`, and legacy customer accounts are deprecated.
 - 1,817 lines, 42 settings. Change it through settings first; header code edits are L5.
 
 ## 6. Blocks: catalog and authoring
@@ -549,6 +555,7 @@ File order: `{% doc %}` → Liquid/markup → one `{% stylesheet %}` → `{% sch
 10. DOM ids stable and unique per instance: append `block.id` (+ `section.id` if needed).
 11. At least one preset with `category` from `t:categories.*` (`basic`, `layout`, `decorative`, `forms`, `links`, `footer`, `collection`, `product`, `blog_post`, `custom`). The picker lists presets alphabetically by name, grouped by category, uncategorized first (PLATFORM [TBS]).
 12. All schema strings are `t:` keys (§14).
+13. Block previews: the picker shows each preset rendered in the theme editor's visual preview, where `request.visual_preview_mode` is true (`Shopify.visualPreviewMode` in JS) and `closest.*` may be blank (PLATFORM [EDI]). A block that needs a resource falls back to a sample there, as stock does: `if request.visual_preview_mode and product == blank` → `assign product = collections.all.products.first` (`blocks/buy-buttons.liquid:5-7`, `blocks/review.liquid:8-13`). Show the populated or open state in the preview; never change what shoppers see with it.
 
 ### 6.2 Standard setting groups (copy verbatim so shared helpers work)
 
@@ -676,7 +683,7 @@ Other context reads: `section.id` for DOM/form ids and Quick Add / SRA targets (
 ### 6.6 Schema design rules
 
 - Settings are a public API: add one only for a choice a merchant should control; keep structural details in code so every combination of controls is valid. Shop-wide choices → theme settings; content/presentation of one context → section/block settings.
-- Use resource pickers (`product`, `collection`, `page`, `blog`, `article`, `image_picker`, `video`, `link_list`, `url`, `metaobject`, `*_list`), never free-text handles. Prefer focused controls, useful defaults and `visible_if` over many always-visible options; keep each `visible_if` aligned with the IDs and values it references.
+- Use resource pickers (`product`, `collection`, `page`, `blog`, `article`, `image_picker`, `video`, `link_list`, `url`, `metaobject`, and the multi-pickers `product_list`, `collection_list`, `article_list`, `metaobject_list`), never free-text handles. Prefer focused controls, useful defaults and `visible_if` over many always-visible options; keep each `visible_if` aligned with the IDs and values it references.
 - Use only attributes the setting type supports (`range` needs numeric `min`, `max`, `default`; `richtext` default starts with `<p>`/`<ul>`; `url` default only `/collections` or `/collections/all`; resource pickers take no `default`; `link_list` default `main-menu` or `footer` per docs, stock also uses `customer-account-main-menu` at `sections/header.liquid:1325`) and the schema kind (block: `name`, `settings`, `blocks`, `presets`, `tag`, `class`; section adds `limit`, `max_blocks`, `enabled_on`/`disabled_on`, `default`, `locales`). Omit `settings` when there are none.
 - Presets are useful starting compositions. Keep preset keys, `block_order`, `"static": true` markers and nested settings aligned with what the Liquid renders; re-check presets and templates when a setting, accepted type or composition changes (Theme Check `ValidSettingsKey`, `SchemaPresetsBlockOrder`, `SchemaPresetsStaticBlocks`, `ValidBlockTarget`).
 - Static for required structure (fixed place and identity); dynamic where merchants control presence and order. Static blocks may still have settings and children.
@@ -684,6 +691,14 @@ Other context reads: `section.id` for DOM/form ids and Quick Add / SRA targets (
 ### 6.7 Liquid style
 
 Liquid renders the initial HTML; JS adds behavior only. `{% liquid %}` for multi-line logic (`#` comments inside); `{%- -%}` where whitespace matters. Dot notation; bracket access only for computed keys (`settings[key]`, `snippets/spacing-style.liquid`). Only objects, tags and filters that exist in source or platform docs (`validate_theme` rejects unknown ones). Render optional content only when it has a value (no empty wrappers or headings). Escape plain merchant strings; never build HTML from unescaped text. Comments only for non-obvious intent or coupling.
+
+Strict parser: Shopify has enforced Liquid's stricter parser on every theme since 2026-01-13 and rewrites a file that breaks it, adding a comment that explains the change (PLATFORM [STRICT]). Stock 4.2.0 complies. `validate_theme` reports only two of these rules (parentheses, and `and`/`or` in an `assign`; checked 2026-10-11), so check the rest by eye before pushing:
+- Filters only in `{{ }}`, `assign` and `echo`; never in `render` or `content_for` arguments: `assign` the filtered value first.
+- `and`/`or` conditions only in `if`, `unless` and `elsif` (in `when`, `or` only separates values, below); never as an argument value or an `assign` value. Wrap the tag in an `if` instead.
+- `and` and `or`, never `&&` or `||`; no parentheses in conditions (nest `if` instead).
+- `when` takes values only (`when 'a', 'b'` or `when 'a' or 'b'`), never a condition (`when 'a' and settings.x`).
+- Every `render` and `content_for` argument is `key: value`; no bare names, no key without a value.
+- A computed top-level lookup is `self[key]`, never a bare `[key]`; `product[key]` stays as is.
 
 ## 7. Layout and page shell
 
@@ -1012,6 +1027,10 @@ Read an event's definition, producers and consumers together before using it. Pr
 
 `assets/standard-actions-override.js` configures `Shopify.actions.updateCart` (target `theme-drawer#cart-drawer`, else `document`) and `openCart` (opens the drawer, else `Theme.routes.cart_url`); `getCart` is not overridden. Components POST to the cart themselves with `fetchConfig()` + `Theme.routes`.
 
+Apps call these actions, and so do shoppers' browser agents through Shopify's WebMCP tools, live on every Liquid storefront since 2026-08 (PLATFORM [SEA][WMCP]). The cart drawer and cart page must keep reacting to updates they did not start: `cart-items-component` refetches when an outside update brings no `sections` (`assets/component-cart-items.js:56-110`). Keep `standard-actions-override.js` and that path intact, and make custom cart UI follow the cart events rather than its own requests alone.
+
+`shopify:cart:attributes-update` (`CartAttributesUpdateEvent`, cart attributes, 2026-08) is newer than Horizon 4.2.0. `@shopify/events` loads unversioned from `https://cdn.shopify.com/storefront/standard-events.js` (`snippets/scripts.liquid:14`), which now exports it, but no stock file sends or listens for it, and the local types (`assets/standard-events.d.ts`, `assets/standard-actions.d.ts`) predate it. Use it as §13.5 says.
+
 ### 12.4 Section Rendering, morph, hydration
 
 - `sectionRenderer.renderSection(sectionId, { cache = !Shopify.designMode, mode = 'full' | 'hydration', injectStylesheet = false, url, shouldRender })` fetches `?section_id=` (with `cache` true, the storefront default, it reuses HTML already cached for that URL, seeded from live sections at `load`; pass `cache: false` for fresh HTML), morphs `#shopify-section-<id>` and returns the HTML. It awaits the morph and propagates failures; fetch and missing-wrapper failures reject: always `await` and handle rejection. It aborts an in-flight render of the same section; a superseded call settles with the newer render's promise, resolves to `''` (aborted, no newer render), or resolves to its own unapplied HTML (abort after fetch), so re-check user intent before acting on the result. HTTP status is not checked. Pass unprefixed ids; live DOM and response both need the `shopify-section-<id>` wrapper.
@@ -1123,6 +1142,13 @@ Variant change (`assets/variant-picker.js`):
 - `snippets/cart-products.liquid`: `form#cart-form` (`/cart`, POST), line items (`_`-prefixed properties hidden, selling plan name, discounts), `quantity-selector` with `name="updates[]"`. `snippets/cart-summary.liquid`: discounts (`cart-discount-component`), note (`cart-note`), totals, installments, checkout button `form="cart-form"`, `content_for_additional_checkout_buttons`.
 - `CartItemsComponent` (`assets/component-cart-items.js`) updates via `Theme.routes.cart_change_url` with `sections` and morphs (`hydration` in the drawer); listens to `CartLinesUpdateEvent`, `quantity-selector:update`, note/discount events, `pageshow` (bfcache). Drawer auto-opens on add when `auto_open_cart_drawer`.
 - Custom code that changes the cart MUST dispatch `CartLinesUpdateEvent` with a promise resolving to `{ cart, detail: { sections, source, sourceId, itemCount, didError, items, productId } }` (`sections` may be absent on error; `cart-items-component` then refetches) and request `sections` for every `cart-items-component` section id (`assets/product-form.js:429-578`).
+- Cart attributes (delivery date, gift options): no stock UI writes them. A `cx-` block saves them with `Shopify.actions.updateCart({ attributes: [{ key, value }] })` (PLATFORM [SEA]):
+  - the list replaces the whole set, so send every key the cart should keep; an empty list clears them;
+  - keys starting with `_` stay hidden at checkout;
+  - the call emits `shopify:cart:attributes-update` as it starts and resolves with `userErrors` instead of throwing, so check them;
+  - its result doesn't include attributes, and no stock component re-renders on the event, so the block updates its own UI.
+
+  Call it after `DOMContentLoaded` (in a click or change handler it always is). `cart.attributes` reads them in Liquid.
 
 ### 13.6 Quick add
 
@@ -1168,7 +1194,7 @@ Semantic HTML and native keyboard behavior first; ARIA only for what native sema
 ### 17.1 Checklist (every change)
 
 1. Read changed Liquid, schema, locale, CSS and JS together: IDs, settings, refs, selectors, events, loading paths agree.
-2. `validate_theme` (shopify-dev-mcp) on every created/changed file: `learn_shopify_api(api: "liquid")` for a `conversationId`, then `validate_theme(conversationId, absoluteThemePath, filesCreatedOrUpdated: [{path}])` with theme-relative paths. Fix errors and warnings; re-run with the same `artifactId` and incremented `revision`. It reads local files only: validate the project's `theme/` folder, where every change is made first (`CLAUDE.md`).
+2. `validate_theme` (shopify-dev-mcp) on every created/changed file: `learn_shopify_api(api: "liquid")` for a `conversationId`, then `validate_theme(conversationId, absoluteThemePath, filesCreatedOrUpdated: [{path}])` with theme-relative paths. Fix errors and warnings; re-run with the same `artifactId` and incremented `revision`. It reads local files only: validate the project's `theme/` folder, where every change is made first (`CLAUDE.md`). It misses most strict-parser errors: check changed Liquid against §6.7 by eye.
 3. Compare findings on stock files with §17.2 before "fixing". `validate_theme` runs Theme Check, so no CLI is needed.
 4. Preview affected templates: desktop + narrow viewport; theme editor (add, remove, reorder, select; every setting; empty and populated states); after interactions (filtering, variant change, first Quick Add open, cart drawer, section re-render); non-default locale / RTL when relevant.
 5. Compare with the approved design side by side at desktop and phone widths, band by band: layout, spacing, type, color, borders, shadows, images, hover and motion. Each difference is a bug: fix it (§2.1, §9.10), or name it to the user with the reason before calling the change done.
@@ -1204,6 +1230,9 @@ The validator reports errors **and** warnings (missing `img` width/height, Liqui
 | Collection banner | The `section` band in `collection.json` bound to `closest.collection` (L2/L3) | — |
 | Header/footer changes | Header settings (rows, positions, sticky, transparent, colors); footer blocks (L2/L3) | Editing `sections/header.liquid` CSS |
 | Announcement bar | `header-announcements` + `_announcement` (L3) | — |
+| Account icon, sign-in sheet or account menu look | Header settings (`actions_display_style`, `customer_account_menu`) and the theme settings behind the `--shopify-account-*` tokens (L1–L2); the remaining tokens and `::part(signed-out-avatar)` in `assets/cx-theme.css` (L5 + L8, §5.4, §9.9); other signed-out avatar markup is an L5 edit to `snippets/header-actions.liquid` | Rebuilding the account menu or sign-in form; styling inside the component |
+| Account pages (orders, profile), sign-in page | Checkout and accounts editor in the Shopify admin (outside the theme, §5.4) | Theme templates |
+| Delivery date, gift options or other order-wide buyer input | `cx-` block on the cart page (`main-cart` accepts `@theme`) saving cart attributes with `Shopify.actions.updateCart` (L6, §13.5); in the drawer it needs an L5 edit to `snippets/cart-drawer.liquid` | Cart note hacks; line-item properties |
 | Popup / modal content | `popup-link` block with any blocks inside (L3) | Custom modal JS |
 | Accordion content | `accordion` + `_accordion-row` (rows accept `@theme`) (L3) | Custom JS |
 | Subscriptions, reviews, wishlists, size charts | `@app` blocks (L0/L3) | Theme code |
@@ -1250,6 +1279,9 @@ The validator reports errors **and** warnings (missing `img` width/height, Liqui
 | A11Y / EDI / PINS | …/best-practices/accessibility · …/editor/integrate-sections-and-blocks · …/editor/preview-inspector |
 | TC / LDOC | …/themes/tools/theme-check/checks · …/tools/liquid-doc |
 | SRA | https://shopify.dev/docs/api/ajax/section-rendering |
+| ACC | …/customer-engagement/account-component · https://shopify.dev/docs/api/storefront-web-components/components/shopify-account |
+| SEA / WMCP | …/best-practices/standard-events-and-actions · https://shopify.dev/docs/api/storefront-events-and-actions · https://shopify.dev/docs/api/web-mcp |
+| STRICT / PREV | …/tools/strict-liquid-migration · …/getting-started/developer-preview |
 | UPD | …/themes/store/success/updates |
 
 `…` = `https://shopify.dev/docs/storefronts/themes`. Docs inconsistencies (checked 2026-10-10): `closest.*` docs say "accessible exclusively via theme settings", yet Horizon uses it in Liquid; Theme Check examples use `context.product` (use `closest.*`); `UnsupportedDocTag` says `{% doc %}` is for snippets while LiquidDoc covers blocks (use it in snippets and blocks, not sections). Undocumented (UNVERIFIED): cross-scope `visible_if` (works in Horizon); block-level `"disabled": true`; `"alpha": true` on color settings (Horizon uses it).

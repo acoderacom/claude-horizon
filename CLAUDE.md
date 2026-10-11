@@ -49,6 +49,7 @@ All rules below are user decisions. Do not re-litigate them.
   - `data-code` for anything stock can't produce: the level (`THEME.md` §2.1), the `cx-` file or `cx_style` value, and in one line why stock can't do it.
 - Before calling the mockup ready, check every `data-horizon` claim against the stock source in `theme/`. Fix the notes, not the design.
 - Use the theme's color palette names (`THEME.md` §10) and fonts from Shopify's font library, and flag any that aren't there.
+- The sheet that opens from the header's account icon, the customer account pages and checkout belong to Shopify, not the theme: design them only within what the theme can set (`THEME.md` §5.4) and say so in the map.
 - A design made elsewhere (Claude Design, Figma, a screenshot): before building, write the same map as a list, band by band, and show it to the user with the bands that need custom code and the places where stock gets close but not exact.
 
 ## Logging changes
