@@ -788,7 +788,7 @@ No `@layer`, no `@scope`. No stock `{% stylesheet %}` contains Liquid or a secon
 
 - Inspect the owning source first: settings-backed tokens, shared classes, helpers, composition pattern. Style through the tokens and classes the settings drive; never hard-code a value a setting controls.
 - One static `{% stylesheet %}` per file; no Liquid in it. Setting-driven values → inline custom properties (preferred) or instance-scoped `{% style %}` (`blocks/icon.liquid:2-10`); `{% style %}` color values live-update in the editor.
-- Subsetting: CSS exists only if its file is in the render tree. Define classes in the file that uses them, a rendered parent or a style owner rendered by every consumer (Theme Check `ValidScopedCSSClass`). The looks behind `cx_style` options are the exception: they live in `assets/cx-theme.css`, which every page loads (§9.10). Verify delivery on full pages and in Section Rendering responses.
+- Subsetting: CSS exists only if its file is in the render tree. Define classes in the file that uses them, a rendered parent or a style owner rendered by every consumer (Theme Check `ValidScopedCSSClass`). For `cx_style` looks, the style owner is a `cx-` snippet the stock file renders (§9.10). Verify delivery on full pages and in Section Rendering responses.
 - Selectors: BEM-ish, single-class, shallow `&` nesting; resolve conflicts by scope and source order; root class = file name; modifiers from setting values (`cx-name--{{ value }}`); state via attributes. Stock uses `:where()` (54×) to stay overridable; doubled classes (`.h1.h1`, `.text-block.text-block`) only to beat known stock rules. Match adjacent stock property ordering.
 - Tokens only (§9.3); namespace component vars `--cx-name-*`.
 - Logical properties only (`margin-inline-start`, `inset-inline`, `padding-block`, `text-align: start|end`); 4.2.0 maps `left`/`right` setting values to `start`/`end`. Physical exceptions need `/* stylelint-disable-line csstools/use-logical -- reason */`. Mirror directional icons under `[dir='rtl']`; verify LTR and RTL.
@@ -864,7 +864,7 @@ Precedents: `blocks/spacer.liquid` (modifiers + namespaced vars + context select
 
 ### 9.9 Global CSS without editing `base.css`
 
-Only for rules no setting, block stylesheet or instance style can express, and for the looks behind `cx_style` options (§9.10).
+Only for site-wide rules (tokens, links, buttons, focus, header, footer) that no setting, block stylesheet or instance style can express. Every page loads this file before it renders, so a look for one kind of section or block goes in its style snippet instead (§9.10).
 - **Route A (recommended):** `assets/cx-theme.css` + one line in `snippets/stylesheets.liquid` after `base.css`: `{{ 'cx-theme.css' | asset_url | stylesheet_tag }}` (L5; covers theme, password and gift-card shells). It beats `base.css` at equal specificity, precedes the inline token `<style>` blocks (override `:root` tokens with `:root:root`), and loads before `{{ content_for_header }}` (`layout/theme.liquid:21` vs `:32`), which injects the `{% stylesheet %}` bundle, so the bundle wins equal-specificity ties (PLATFORM [LCR]): override component CSS by specificity or scoping, not source order.
 - **Route B:** a `snippets/cx-<name>-styles.liquid` owner rendered from the layout (precedent `card-hover-effect-styles`, `layout/theme.liquid:22`); subject to subsetting; add to `layout/password.liquid` if needed.
 - Settings-driven global values: a `{% style %}` rendered in `<head>` (pattern `theme-styles-variables`).
@@ -882,13 +882,13 @@ A visual detail of the approved design that no setting covers (a shadow, a fade 
 
 - MUST NOT style one instance by its generated DOM id (`#shopify-section-…`, `block.id`) or through the editor's Custom CSS (`custom_css`, §2.6): the merchant cannot see or keep that link, and the id is generated (UNVERIFIED whether it survives a theme copy; assume it does not).
 - New options are saved data (§3.8): add values, never rename or remove them.
-- Rules in `assets/cx-theme.css` that reach into stock markup (stock classes such as `.group-block`, attributes such as `[data-menu-style]`, stock custom properties) stop working without an error if an update renames them. List each one in the `cx-theme.css` entry in `customizations.md`, so the first check after an update knows what to retest.
+- Rules in `assets/cx-theme.css` and the `cx-` style snippets that reach into stock markup (stock classes such as `.group-block`, attributes such as `[data-menu-style]`, stock custom properties) stop working without an error if an update renames them. List each one in that file's entry in `customizations.md`, so the first check after an update knows what to retest.
 
 **The `cx_style` option.** One per stock section or block that needs a look no setting covers, so every stock edit has the same small shape and merging it again after an update is mechanical:
 1. Schema: a `header` and one `select` setting, id `cx_style`, label `t:cx.style.label`, with `""` first (`t:cx.style.default`, the stock look) and one value per look, e.g. `eyebrow` or `pill`. Its labels go under `cx.style` in `locales/en.default.schema.json` (§14), shared by every file.
-2. Liquid: when the value isn't blank, add the class `cx-style-<value>` to the element the file already renders: through its snippet's `class` parameter where it has one (`{% render 'text', block: block, class: cx_style_class %}`), otherwise on its outer element. Nothing else in the file changes.
-3. CSS: each look goes in `assets/cx-theme.css` under `.cx-style-<value>`, never in the stock file's `{% stylesheet %}`, so the stock edit stays the schema plus the class. That file loads before the stock stylesheets, so its rules must out-rank them, e.g. by starting with `:root ` (§9.9).
-4. Reuse a value across files when the look is the same; a new look is a new value. A look that needs its own markup, settings or JS is a `cx-` block (L6), not a `cx_style` value.
+2. Liquid: when the value isn't blank, add the class `cx-style-<value>` to the element the file already renders: through its snippet's `class` parameter where it has one (`{% render 'text', block: block, class: cx_style_class %}`), otherwise on its outer element.
+3. CSS: each file's looks go in its own style snippet, named after the stock file (`snippets/cx-text-styles.liquid` for `blocks/text.liquid`, `snippets/cx-section-styles.liquid` for `sections/section.liquid`), holding one `{% stylesheet %}` with the rules for each `.cx-style-<value>`. The stock file renders it unconditionally next to the class line (`{% render 'cx-text-styles' %}`), so Shopify sends the looks only on pages where that section or block appears, and they're there when the merchant switches styles in the editor. The stock edit stays the schema, the class and that one line; never put the looks in the stock file's own `{% stylesheet %}`. Shopify doesn't guarantee the order of the stylesheets it bundles, so the rules must out-rank the stock ones, e.g. by starting with `:root ` (§9.9).
+4. Use the same value name in every file where the look is the same; each file's snippet holds its rules, or `cx-theme.css` holds them once when the look is site-wide. A new look is a new value. A look that needs its own markup, settings or JS is a `cx-` block (L6), not a `cx_style` value.
 
 ## 10. Color system
 
@@ -1214,7 +1214,7 @@ The validator reports errors **and** warnings (missing `img` width/height, Liqui
 | Design that would rebuild a stock section (header menu, drawer) | Offer the user the §2.1 choices: new options on the stock file (L5), a `cx-` section that replaces it (L7, may start as a copy), or a design change | Stacking stock edits without asking |
 | Variant-reactive custom UI | `cx-` block listening to `ProductSelectEvent` (§13.1) (L6) | Editing `variant-picker.js` |
 | Site-wide style rule no setting covers | `assets/cx-theme.css` via `snippets/stylesheets.liquid` (L5 + L8, §9.9) | Editing `base.css` |
-| Style detail on a stock section or block that no setting covers | A `cx_style` option on the stock file that owns it, with the look in `cx-theme.css` (L5 + L8, §9.10) | Dropping the detail; Custom CSS; styling by generated id |
+| Style detail on a stock section or block that no setting covers | A `cx_style` option on the stock file that owns it, with the look in its `cx-` style snippet (L5 + L8, §9.10) | Dropping the detail; Custom CSS; styling by generated id |
 
 ## 19. Known stock defects and quirks (do not imitate; do not fix unless asked)
 
