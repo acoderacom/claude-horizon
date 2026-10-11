@@ -12,9 +12,9 @@ Horizon version of this theme: **[agent: insert the Horizon version THEME.md cov
 Two kinds of file are tracked:
 
 1. **Modified stock files**: any edit to a file that shipped with Horizon: `config/settings_data.json` (L1); `templates/*.json` and `sections/*-group.json` (L2–L4); `locales/*.json` (added `cx.*` keys, L8); any stock `.liquid`, `.css` or `.js` file or `config/settings_schema.json` (L5, small additions only). Keep its L5 code edits few: each one has to be merged again by hand after a Horizon update (see Tips).
-2. **New custom code**: any file that does not exist in stock Horizon: `cx-` blocks (L6), `cx-` sections (L7), `cx-` snippets and assets (L8), new templates such as `templates/page.faq.json` (L3; plain name, no `cx-`). These are copied over as is on an update.
+2. **New custom code**: any file that does not exist in stock Horizon: `cx-` blocks (L6), `cx-` sections (L7), `cx-` snippets and assets (L8), new templates such as `templates/page.faq.json` (L3; plain name, no `cx-`). On a Horizon update, they are copied by hand into the new version as they are.
 
-Not tracked: store data (products, collections, metafields, metaobjects, menus, apps: L0) and changes the merchant makes in the theme editor. When a change depends on store data, name it in the entry.
+Not tracked: store data (products, collections, metafields, metaobjects, menus, pages, Search & Discovery filters, apps: L0) and changes the merchant makes in the theme editor. When a change depends on store data, name it in the entry.
 
 ---
 
@@ -49,7 +49,7 @@ Why not stock:   <the specific missing capability, per candidate>
 Level chosen:    L5 | L6 | L7 | L8  (+ L4 if custom-liquid)
 Files:           <new or edited files>
 Settings/IDs:    <new setting IDs, block types, static ids, locale keys>
-Upgrade impact:  <stock files edited (re-merge on update) / new files (carry over)>
+Upgrade impact:  <stock files edited (merge again by hand on update) / new files (copy as they are on update)>
 ```
 
 "Why not stock" must answer, by level: L4, why no stock setting or dynamic source can show it and why it stays a few lines with no CSS, settings or JS; L5, which stock file already does the job and why the edit is a small addition to it (otherwise it is an L6 block); L6, which stock blocks, presets and compositions (L1–L3) were tried and what is missing; L7, why `section` (13 presets) filled with theme blocks, including a `cx-` block, cannot express the region; L8, which L5–L7 change it serves.
@@ -57,7 +57,7 @@ Upgrade impact:  <stock files edited (re-merge on update) / new files (carry ove
 ### Tips
 
 - **Automatic updates** (`THEME.md` §2.1): Shopify updates the theme automatically only while every file other than `config/settings_data.json` and the JSON files in `templates/` is unchanged. Any other stock edit stops them, including `sections/*-group.json` and `locales/*.json`; assume any new file outside `templates/` does too.
-- **After a manual Horizon update** (done outside the `CLAUDE.md` workflow, which rules out the unpublished copy an update needs): re-apply every entry under "Modified stock files"; copy every file under "New custom code"; re-run `validate_theme` on all of them; update the version line at the top and run setup again (`THEME.md` §0.1).
+- **After a manual Horizon update**: the update installs the new version as an unpublished copy, which the `CLAUDE.md` workflow rules out, so it happens outside that workflow, on the copy and before it is published: re-apply every entry under "Modified stock files", copy every file under "New custom code" as it is, run `validate_theme` on all of them, then publish. Once the new version is live, the version check stops theme work (`THEME.md` §0.1): run setup again first (**Full theme design**), then update the Horizon version in this file's title and in the version line at the top. Setup keeps this file as it is.
 - **A typical theme-block change** is several entries: `blocks/cx-<name>.liquid` (L6, holds the justification) and `assets/cx-<name>.js` (L8) under "New custom code"; the `cx.*` keys added to `locales/*.json` (L8) under "Modified stock files"; the `templates/*.json` that places it (L3) under "Modified stock files" only if you placed it, not if the merchant did.
 - **Locale keys:** list every `cx.*` key added to `locales/en.default.json`, `locales/en.default.schema.json` and each other storefront locale the shop publishes (`THEME.md` §14).
 - **Removing custom code:** ask the user first (`CLAUDE.md`). Check that no template or section group still uses the `cx-` file (saved data breaks, `THEME.md` §3.8), then undo its stock edits and delete its entries.

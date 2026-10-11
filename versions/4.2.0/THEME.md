@@ -141,7 +141,7 @@ The order to work in (as in `CLAUDE.md`'s design rules and `customizations.md`):
 
 Rules:
 - L0–L4 keep automatic updates, except changes to `sections/*-group.json` (header, footer, announcement bar), which is not in the exception: "A theme is automatically updated only if all theme files, except `settings_data.json` and any JSON files in the `/templates` directory, are in their original state" (PLATFORM [UPD]).
-- L5 vs L6: choose L5 only when the stock file already owns the responsibility and the change is small and additive; otherwise L6, even when L5 is possible. A manual update installs the new version as an unpublished copy (PLATFORM [UPD]); `cx-` files are copied over, stock edits are re-merged by hand. Do not copy a stock block into a `cx-` file and edit the copy unless the stock block must stay unchanged elsewhere; say so in the justification.
+- L5 vs L6: choose L5 only when the stock file already owns the responsibility and the change is small and additive; otherwise L6, even when L5 is possible. A manual update installs the new version as an unpublished copy (PLATFORM [UPD]); `cx-` files are copied into it as they are and stock edits are merged again, both by hand. Do not copy a stock block into a `cx-` file and edit the copy unless the stock block must stay unchanged elsewhere; say so in the justification.
 - L7 only for page-level needs. First prove that `sections/section.liquid` (13 presets; `@theme`, `@app`, `_divider`) plus blocks cannot do it.
 - L4 that grows beyond a few lines or needs CSS, settings or JS becomes a `cx-` block.
 
@@ -160,7 +160,7 @@ Why not stock:   <the specific missing capability, per candidate>
 Level chosen:    L5 | L6 | L7 | L8  (+ L4 if custom-liquid)
 Files:           <new or edited files>
 Settings/IDs:    <new setting IDs, block types, static ids, locale keys>
-Upgrade impact:  <stock files edited (re-merge on update) / new files (carry over)>
+Upgrade impact:  <stock files edited (merge again by hand on update) / new files (copy as they are on update)>
 ```
 
 ### 2.4 Change log contract
