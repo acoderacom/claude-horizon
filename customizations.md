@@ -7,7 +7,7 @@ The order to work in (`CLAUDE.md` design rules, `THEME.md` §2.1–§2.2), stopp
 2. existing sections and theme blocks, with their presets and settings (L2–L3);
 3. a `custom-liquid` block, only for a few lines (L4);
 4. a new `cx-` theme block (L6), unless the change is a small addition to the stock file that already does the job: then edit that file (L5);
-5. a new `cx-` section only for a page-level region that sections plus blocks cannot express (L7).
+5. a new `cx-` section only for a page-level region that sections plus blocks cannot express, or to replace a stock section when the user picks that (L7).
 
 Horizon version of this theme: **[agent: insert the Horizon version THEME.md covers]** (`config/settings_schema.json` → `theme_version`).
 
@@ -54,7 +54,7 @@ Settings/IDs:    <new setting IDs, block types, static ids, locale keys>
 Upgrade impact:  <stock files edited (merge again by hand on update) / new files (copy as they are on update)>
 ```
 
-"Why not stock" must answer, by level: L4, why no stock setting or dynamic source can show it and why it stays a few lines with no CSS, settings or JS; L5, which stock file already does the job and why the edit is a small addition to it (otherwise it is an L6 block); L6, which stock blocks, presets and compositions (L1–L3) were tried and what is missing or does not match the design; L7, why `section` (13 presets) filled with theme blocks, including a `cx-` block, cannot express the region; L8, which L5–L7 change it serves.
+"Why not stock" must answer, by level: L4, why no stock setting or dynamic source can show it and why it stays a few lines with no CSS, settings or JS; L5, which stock file already does the job and why the edit is a small addition to it (otherwise it is an L6 block, or, if it would rebuild the file, the user's choice under `THEME.md` §2.1); L6, which stock blocks, presets and compositions (L1–L3) were tried and what is missing or does not match the design; L7, why `section` (13 presets) filled with theme blocks, including a `cx-` block, cannot express the region, or that the user picked it to replace a stock section; L8, which L5–L7 change it serves.
 
 ### Tips
 

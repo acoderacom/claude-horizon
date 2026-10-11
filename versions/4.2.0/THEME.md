@@ -139,14 +139,19 @@ The order to work in (as in `CLAUDE.md`'s design rules and `customizations.md`),
 2. existing sections and theme blocks, with their presets and settings (L2–L3);
 3. a `custom-liquid` block, only for a few lines (L4);
 4. a new `cx-` theme block (L6), unless the change is a small addition to the stock file that already does the job: then edit that file (L5);
-5. a new `cx-` section only for a page-level region that sections plus blocks cannot express (L7).
+5. a new `cx-` section only for a page-level region that sections plus blocks cannot express, or to replace a stock section when the user picks that (L7).
 
 Rules:
 - A level works only when the result matches the approved design (mockup, screenshot or the user's description) at desktop and phone widths: layout, spacing, type, color, borders, shadows, hover and motion. If it only comes close, go to the next level. Changing the design to fit stock needs the user's approval (`CLAUDE.md`). A style detail no setting covers goes where §9.10 says; never drop it.
 - L1 changes every page: use it for site-wide choices, never to fit one band; a band that differs needs L2 or a later step.
 - L0–L4 keep automatic updates, except changes to `sections/*-group.json` (header, footer, announcement bar), which is not in the exception: "A theme is automatically updated only if all theme files, except `settings_data.json` and any JSON files in the `/templates` directory, are in their original state" (PLATFORM [UPD]).
 - L5 vs L6: choose L5 only when the stock file already owns the responsibility and the change is small and additive; otherwise L6, even when L5 is possible. A manual update installs the new version as an unpublished copy (PLATFORM [UPD]); `cx-` files are copied into it as they are and stock edits are merged again, both by hand. Do not copy a stock block into a `cx-` file and edit the copy unless the stock block must stay unchanged elsewhere; say so in the justification.
-- L7 only for page-level needs. First prove that `sections/section.liquid` (13 presets; `@theme`, `@app`, `_divider`) plus blocks cannot do it.
+- Keep every L5 edit additive: stock behavior stays the default (a new setting or option, a new allowed block type, an added line), and no existing setting changes what it does (§3.8).
+- More than a small addition: when matching the design needs several edits to one stock file, or replaces its markup, CSS or JS instead of adding to it (for example rebuilding the header's menu or drawer), stop before writing code, offer the user these choices with their cost, and build the one they pick:
+  1. new options on the stock file (L5): stock stays the default; every edit is merged again by hand on each Horizon update;
+  2. a `cx-` section that replaces the stock one (L7), reusing stock snippets and blocks where it can; it may start as a copy of the stock file (say so in the justification). It is copied into a new version as it is, but stock fixes to the original no longer reach it, and the merchant's settings on the stock section don't carry over, so they are set again;
+  3. a change to the design.
+- L7 only for page-level needs: first prove that `sections/section.liquid` (13 presets; `@theme`, `@app`, `_divider`) plus blocks cannot do it, or have the user pick it to replace a stock section (rule above).
 - L4 that grows beyond a few lines or needs CSS, settings or JS becomes a `cx-` block.
 
 ### 2.2 Theme blocks first
@@ -1199,6 +1204,7 @@ The validator reports errors **and** warnings (missing `img` width/height, Liqui
 | Small one-off Liquid | `custom-liquid` block (L4) | — |
 | New interactive component (countdown, calculator, locator) | `cx-` block + `assets/cx-*.js` Component (L6), Appendix A.2 | New section |
 | Page-level region with its own data loop or grid | `cx-` section reusing stock blocks/snippets (L7), Appendix A.3 | Copying a stock section |
+| Design that would rebuild a stock section (header menu, drawer) | Offer the user the §2.1 choices: new options on the stock file (L5), a `cx-` section that replaces it (L7, may start as a copy), or a design change | Stacking stock edits without asking |
 | Variant-reactive custom UI | `cx-` block listening to `ProductSelectEvent` (§13.1) (L6) | Editing `variant-picker.js` |
 | Site-wide style rule no setting covers | `assets/cx-theme.css` via `snippets/stylesheets.liquid` (L5 + L8, §9.9) | Editing `base.css` |
 | Style detail on a stock section or block that no setting covers | New setting or option on the stock file that owns it (L5, §9.10) | Dropping the detail; Custom CSS; styling by generated id |
