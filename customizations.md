@@ -2,10 +2,12 @@
 
 The only record of how this theme differs from stock Horizon, apart from merchant edits made in the theme editor (`THEME.md` §2.4). Every change to a theme file is logged here in the same task it is made. How to choose and build a change (the L0–L8 ladder, `cx-` naming, validation) lives in `THEME.md`; working rules live in `CLAUDE.md`.
 
-The order to work in (`CLAUDE.md` design rules, `THEME.md` §2.1–§2.2):
-1. existing settings, sections and theme blocks (L0–L3; `custom-liquid` only for a few lines, L4);
-2. when code is needed, a new `cx-` theme block (L6), unless the change is a small addition to the stock file that already does the job: then edit that file (L5);
-3. a new `cx-` section only for a page-level region that sections plus blocks cannot express (L7).
+The order to work in (`CLAUDE.md` design rules, `THEME.md` §2.1–§2.2), stopping at the first step that matches the design:
+1. store data and global theme settings (L0–L1);
+2. existing sections and theme blocks, with their presets and settings (L2–L3);
+3. a `custom-liquid` block, only for a few lines (L4);
+4. a new `cx-` theme block (L6), unless the change is a small addition to the stock file that already does the job: then edit that file (L5);
+5. a new `cx-` section only for a page-level region that sections plus blocks cannot express (L7).
 
 Horizon version of this theme: **[agent: insert the Horizon version THEME.md covers]** (`config/settings_schema.json` → `theme_version`).
 

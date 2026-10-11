@@ -134,13 +134,16 @@ User decision: **use Horizon as much as possible; custom code is allowed, but ev
 | L7 | New section `sections/cx-*.liquid` | New file | No | Page-level region with its own data loop, grid or JS that `section` + blocks cannot express |
 | L8 | Supporting code: `snippets/cx-*`, `assets/cx-*` (incl. `assets/cx-theme.css`), locale keys | New/edited | No | Only in service of L5–L7 |
 
-The order to work in (as in `CLAUDE.md`'s design rules and `customizations.md`):
-1. existing settings, sections and theme blocks (L0–L3; `custom-liquid` only for a few lines, L4);
-2. when code is needed, a new `cx-` theme block (L6), unless the change is a small addition to the stock file that already does the job: then edit that file (L5);
-3. a new `cx-` section only for a page-level region that sections plus blocks cannot express (L7).
+The order to work in (as in `CLAUDE.md`'s design rules and `customizations.md`), stopping at the first step that matches the design:
+1. store data and global theme settings (L0–L1);
+2. existing sections and theme blocks, with their presets and settings (L2–L3);
+3. a `custom-liquid` block, only for a few lines (L4);
+4. a new `cx-` theme block (L6), unless the change is a small addition to the stock file that already does the job: then edit that file (L5);
+5. a new `cx-` section only for a page-level region that sections plus blocks cannot express (L7).
 
 Rules:
 - A level works only when the result matches the approved design (mockup, screenshot or the user's description) at desktop and phone widths: layout, spacing, type, color, borders, shadows, hover and motion. If it only comes close, go to the next level. Changing the design to fit stock needs the user's approval (`CLAUDE.md`). A style detail no setting covers goes where §9.10 says; never drop it.
+- L1 changes every page: use it for site-wide choices, never to fit one band; a band that differs needs L2 or a later step.
 - L0–L4 keep automatic updates, except changes to `sections/*-group.json` (header, footer, announcement bar), which is not in the exception: "A theme is automatically updated only if all theme files, except `settings_data.json` and any JSON files in the `/templates` directory, are in their original state" (PLATFORM [UPD]).
 - L5 vs L6: choose L5 only when the stock file already owns the responsibility and the change is small and additive; otherwise L6, even when L5 is possible. A manual update installs the new version as an unpublished copy (PLATFORM [UPD]); `cx-` files are copied into it as they are and stock edits are merged again, both by hand. Do not copy a stock block into a `cx-` file and edit the copy unless the stock block must stay unchanged elsewhere; say so in the justification.
 - L7 only for page-level needs. First prove that `sections/section.liquid` (13 presets; `@theme`, `@app`, `_divider`) plus blocks cannot do it.
