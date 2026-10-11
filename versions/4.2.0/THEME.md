@@ -31,7 +31,7 @@ Get every heading's line number with one search (`grep -n '^##' THEME.md`), then
 | 6 | Blocks: authoring conventions, standard setting groups, public and private catalogs, parent coupling, schema rules, Liquid style | Choosing a stock block; writing or editing a block (L5, L6) |
 | 7 | `layout/theme.liquid` render order, shell facts, editing layouts | Editing `layout/`; page width, scroll container, page-wide markup |
 | 8 | Snippets: style helpers, component renderers, style owners | Rendering buttons, media, prices, icons and the like; writing a snippet |
-| 9 | CSS: layers, rules, tokens, global classes, typography, spacing, CSS for a `cx-` block, global CSS (§9.9) | Writing any CSS |
+| 9 | CSS: layers, rules, tokens, global classes, typography, spacing, CSS for a `cx-` block, global CSS (§9.9), where a style detail goes (§9.10) | Writing any CSS; matching a design detail no setting covers |
 | 10 | Color model, `contrast-override`, color-aware CSS | Color settings or color CSS |
 | 11 | Every `config/settings_schema.json` group and setting ID | Theme settings (L1); reading `settings.*`; editing `settings_schema.json` |
 | 12 | JavaScript: loading and import map, `Component`, events, section rendering, theme editor, utilities | Writing or changing any JS |
@@ -72,7 +72,7 @@ Get every heading's line number with one search (`grep -n '^##' THEME.md`), then
 
 ### 0.4 Golden rules
 
-1. **Horizon first.** Walk the ladder (§2.1) top-down and stop at the first level that works. L5 vs L6 is decided by the §2.1 rule, not by order. Custom code needs a written justification (§2.3).
+1. **Horizon first.** Walk the ladder (§2.1) top-down and stop at the first level that works: one that matches the approved design at desktop and phone widths, not one that comes close (§2.1). L5 vs L6 is decided by the §2.1 rule, not by order. Custom code needs a written justification (§2.3).
 2. **Theme blocks are the unit of work.** Compose with existing sections, blocks and presets; when code is unavoidable the default artifact is a new theme block, not a section (§2.2).
 3. **Saved data is a contract.** MUST NOT rename, remove or repurpose block/section types (file names), setting IDs, setting `type`s, select/radio values, static block `id`s or preset keys referenced by templates (§3.8).
 4. **JSON data files belong to the editor.** `templates/*.json`, `sections/*-group.json`, `config/settings_data.json` are rewritten on every save: read the current copy, merge, never overwrite (§4.1).
@@ -118,7 +118,7 @@ No `schemas/` folder: section and block schemas are the JSON inside `{% schema %
 
 ## 2. How to customize: the ladder
 
-User decision: **use Horizon as much as possible; custom code is allowed, but every custom change must say why Horizon could not do it.**
+User decision: **use Horizon as much as possible; custom code is allowed, but every custom change must say why Horizon could not do it.** Horizon can do it only when the result matches the approved design.
 
 ### 2.1 Levels
 
@@ -140,6 +140,7 @@ The order to work in (as in `CLAUDE.md`'s design rules and `customizations.md`):
 3. a new `cx-` section only for a page-level region that sections plus blocks cannot express (L7).
 
 Rules:
+- A level works only when the result matches the approved design (mockup, screenshot or the user's description) at desktop and phone widths: layout, spacing, type, color, borders, shadows, hover and motion. If it only comes close, go to the next level. Changing the design to fit stock needs the user's approval (`CLAUDE.md`). A style detail no setting covers goes where §9.10 says; never drop it.
 - L0–L4 keep automatic updates, except changes to `sections/*-group.json` (header, footer, announcement bar), which is not in the exception: "A theme is automatically updated only if all theme files, except `settings_data.json` and any JSON files in the `/templates` directory, are in their original state" (PLATFORM [UPD]).
 - L5 vs L6: choose L5 only when the stock file already owns the responsibility and the change is small and additive; otherwise L6, even when L5 is possible. A manual update installs the new version as an unpublished copy (PLATFORM [UPD]); `cx-` files are copied into it as they are and stock edits are merged again, both by hand. Do not copy a stock block into a `cx-` file and edit the copy unless the stock block must stay unchanged elsewhere; say so in the justification.
 - L7 only for page-level needs. First prove that `sections/section.liquid` (13 presets; `@theme`, `@app`, `_divider`) plus blocks cannot do it.
@@ -861,6 +862,19 @@ Only for rules no setting, block stylesheet or instance style can express.
 - Settings-driven global values: a `{% style %}` rendered in `<head>` (pattern `theme-styles-variables`).
 - Never put global overrides in a block's `{% stylesheet %}`.
 
+### 9.10 Where a style detail goes
+
+A visual detail of the approved design that no setting covers (a shadow, a fade direction, a column ratio, a hover effect) goes in the first row that fits. Never drop it.
+
+| Detail | Where | Level |
+|---|---|---|
+| Part of a new component | That `cx-` block's own `{% stylesheet %}` (§9.8) | L6 |
+| On some instances of a stock section or block | A new setting or option value on the stock file that owns the styling, applied as a modifier class or inline custom property (§9.2), so the merchant turns it on per instance | L5 |
+| On every instance, site-wide (all links in text, all card badges) | `assets/cx-theme.css` (§9.9 Route A) | L5 + L8 |
+
+- MUST NOT style one instance by its generated DOM id (`#shopify-section-…`, `block.id`) or through the editor's Custom CSS (`custom_css`, §2.6): the merchant cannot see or keep that link, and the id is generated (UNVERIFIED whether it survives a theme copy; assume it does not).
+- New options are saved data (§3.8): add values, never rename or remove them.
+
 ## 10. Color system
 
 ### 10.1 Model
@@ -1140,8 +1154,9 @@ Semantic HTML and native keyboard behavior first; ARIA only for what native sema
 2. `validate_theme` (shopify-dev-mcp) on every created/changed file: `learn_shopify_api(api: "liquid")` for a `conversationId`, then `validate_theme(conversationId, absoluteThemePath, filesCreatedOrUpdated: [{path}])` with theme-relative paths. Fix errors and warnings; re-run with the same `artifactId` and incremented `revision`. It reads local files only: validate the project's `theme/` folder, where every change is made first (`CLAUDE.md`).
 3. Compare findings on stock files with §17.2 before "fixing". `validate_theme` runs Theme Check, so no CLI is needed.
 4. Preview affected templates: desktop + narrow viewport; theme editor (add, remove, reorder, select; every setting; empty and populated states); after interactions (filtering, variant change, first Quick Add open, cart drawer, section re-render); non-default locale / RTL when relevant.
-5. Interactions: keyboard and pointer, focus movement, live feedback, reduced motion, delayed module loading, request failure, repeated section rendering.
-6. Record the change (§2.4). Report each unavailable check (validation, preview, store auth, representative data) with the exact command or inspection to run next.
+5. Compare with the approved design side by side at desktop and phone widths, band by band: layout, spacing, type, color, borders, shadows, images, hover and motion. Each difference is a bug: fix it (§2.1, §9.10), or name it to the user with the reason before calling the change done.
+6. Interactions: keyboard and pointer, focus movement, live feedback, reduced motion, delayed module loading, request failure, repeated section rendering.
+7. Record the change (§2.4). Report each unavailable check (validation, preview, store auth, representative data) with the exact command or inspection to run next.
 
 ### 17.2 `validate_theme` baseline for stock 4.2.0 (run 2026-10-10, twice, same result)
 
@@ -1183,6 +1198,7 @@ The validator reports errors **and** warnings (missing `img` width/height, Liqui
 | Page-level region with its own data loop or grid | `cx-` section reusing stock blocks/snippets (L7), Appendix A.3 | Copying a stock section |
 | Variant-reactive custom UI | `cx-` block listening to `ProductSelectEvent` (§13.1) (L6) | Editing `variant-picker.js` |
 | Site-wide style rule no setting covers | `assets/cx-theme.css` via `snippets/stylesheets.liquid` (L5 + L8, §9.9) | Editing `base.css` |
+| Style detail on a stock section or block that no setting covers | New setting or option on the stock file that owns it (L5, §9.10) | Dropping the detail; Custom CSS; styling by generated id |
 
 ## 19. Known stock defects and quirks (do not imitate; do not fix unless asked)
 

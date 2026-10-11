@@ -28,7 +28,7 @@ Level: L1–L8 (`THEME.md` §2.1)
 What: what the file does, or what changed and where. Quote one-line stock edits verbatim.
 Settings: settings touched, if any (table below for `config/settings_data.json`); store data it reads (metafield `namespace.key`, metaobject type, menu handle).
 Why: the reason. For L4–L8, the justification block below.
-Checks: `validate_theme` result and what was previewed, or what could not be checked.
+Checks: `validate_theme` result, what was previewed and compared with the design, and any difference left (with the user's answer), or what could not be checked.
 Undo: how to put it back.
 ```
 
@@ -52,7 +52,7 @@ Settings/IDs:    <new setting IDs, block types, static ids, locale keys>
 Upgrade impact:  <stock files edited (merge again by hand on update) / new files (copy as they are on update)>
 ```
 
-"Why not stock" must answer, by level: L4, why no stock setting or dynamic source can show it and why it stays a few lines with no CSS, settings or JS; L5, which stock file already does the job and why the edit is a small addition to it (otherwise it is an L6 block); L6, which stock blocks, presets and compositions (L1–L3) were tried and what is missing; L7, why `section` (13 presets) filled with theme blocks, including a `cx-` block, cannot express the region; L8, which L5–L7 change it serves.
+"Why not stock" must answer, by level: L4, why no stock setting or dynamic source can show it and why it stays a few lines with no CSS, settings or JS; L5, which stock file already does the job and why the edit is a small addition to it (otherwise it is an L6 block); L6, which stock blocks, presets and compositions (L1–L3) were tried and what is missing or does not match the design; L7, why `section` (13 presets) filled with theme blocks, including a `cx-` block, cannot express the region; L8, which L5–L7 change it serves.
 
 ### Tips
 
