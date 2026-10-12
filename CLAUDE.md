@@ -43,14 +43,18 @@ All rules below are user decisions. Do not re-litigate them.
 - Name every new block, section, snippet, asset, CSS class and custom element with the `cx-` prefix (`_cx-` for private blocks), and put new locale keys under `cx.` (`THEME.md` §2.5). New page templates keep a plain name the merchant can read (for example `page.faq.json`).
 
 ## Designing a mockup
-- Design first: don't limit a mockup to what stock Horizon can do. Design both desktop and phone widths.
-- Every band carries a Horizon map, shown by an overlay the user can switch on:
-  - `data-horizon`: the stock section, its preset, its blocks and the settings that produce the band (`THEME.md` §5.3, §6.3, §11).
-  - `data-code` for anything stock can't produce: the level (`THEME.md` §2.1), the `cx-` file or `cx_style` value, and in one line why stock can't do it.
-- Before calling the mockup ready, check every `data-horizon` claim against the stock source in `theme/`. Fix the notes, not the design.
-- Use the theme's color palette names (`THEME.md` §10) and fonts from Shopify's font library, and flag any that aren't there.
-- The sheet that opens from the header's account icon, the customer account pages and checkout belong to Shopify, not the theme: design them only within what the theme can set (`THEME.md` §5.4) and say so in the map.
-- A design made elsewhere (Claude Design, Figma, a screenshot): before building, write the same map as a list, band by band, and show it to the user with the bands that need custom code and the places where stock gets close but not exact.
+Design in two passes, and keep them apart.
+
+1. **Free design.** Be creative: design what suits the brand and its products, as a designer would, not as a theme developer. In this pass don't read `THEME.md` or look at `theme/`, and don't limit the design to what stock Horizon can do. The user decides on custom code later, band by band. Only three limits apply: name the colors as a small palette, use fonts from Shopify's font library, and leave out the parts Shopify owns (below). Design both desktop and phone widths, with real-looking copy.
+2. **Horizon map.** Only after the user approves the look. Don't change the design while mapping unless the user asks.
+   - Give every band a map, shown by an overlay the user can switch on:
+     - `data-horizon`: the stock section, its preset, its blocks and the settings that produce the band (`THEME.md` §5.3, §6.3, §11).
+     - `data-code` for anything stock can't produce: the level (`THEME.md` §2.1), the `cx-` file or `cx_style` value, and in one line why stock can't do it.
+   - Check every `data-horizon` claim against the stock source in `theme/`. Fix the notes, not the design.
+   - Match the colors to the theme's color palette (`THEME.md` §10) and flag any fonts that aren't in Shopify's font library.
+   - Then show the user a list, band by band, in three groups: built from stock; close in stock but not exact (what differs); needs custom code (level, `cx-` file, and why). Don't build until the user has answered every item in the last two groups.
+
+- **Parts Shopify owns:** the sheet that opens from the header's account icon, the customer account pages and checkout. Leave them out of the free design. If the user asks for them, design them only within what the theme can set (`THEME.md` §5.4) and say so in the map.
 
 ## Logging changes
 - **IMPORTANT:** `customizations.md` must be updated in the same task as the change, for both kinds of change: (1) any edit to a stock Horizon file, and (2) any newly created custom code (section, block, snippet, asset, template). Record what its "How to write an entry" section asks: file, level, what it does or what changed, settings, why (with the `THEME.md` §2.3 justification for L4–L8), checks, and how to undo. It is the only record of how this theme differs from stock Horizon, apart from merchant edits made in the theme editor (`THEME.md` §2.4).
