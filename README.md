@@ -12,9 +12,11 @@ Project docs for designing Shopify's [Horizon](https://github.com/Shopify/horizo
 
 `CLAUDE.md` and `customizations.md` are shared by every version; each `THEME.md` describes exactly one.
 
+For editing a copy of a live store's theme, Horizon or not, `live-site/` holds a `CLAUDE.md` and `customizations.md` with the same workflow and design rules, without the mockup rules or a Horizon spec: `THEME.md` starts blank, and Claude writes it from the theme's own files when you ask.
+
 ## Quick Start
 
-Run the setup from `@acodera/shopify-admin-mcp` (1.7.0 or later) in your project folder and choose **Full theme design**:
+Run the setup from `@acodera/shopify-admin-mcp` (1.7.0 or later) in your project folder and choose **Full theme design with Horizon** (**Full theme design** before 1.10.0):
 
 ```bash
 npx -y @acodera/shopify-admin-mcp@latest setup
@@ -26,9 +28,13 @@ If the live theme is older, newer or not Horizon, setup says which version to sw
 
 Running it again keeps `customizations.md` and your own changes to `CLAUDE.md`, and asks before replacing `theme/` or `THEME.md`.
 
+### Editing a live site
+
+Choose **Full theme edit live site** (1.10.0 or later). First duplicate the live theme in the Shopify admin (**Online Store → Themes → ⋯ → Duplicate**) and give the copy a name. Setup lists the store's themes and you pick the copy Claude edits; the live theme can't be picked. Live theme writes stay off and themes are locked, so the server refuses any change to the live theme and any theme create, duplicate, rename, delete or publish: you publish the copy yourself. Setup writes `.mcp.json`, `CLAUDE.md` and `customizations.md` from `live-site/` with the copy's name, version and ID filled in, a blank `THEME.md` and an empty `theme/`. Then, by hand: download the copy (**⋯ → Download theme file**) and unzip it into `theme/`, and, when you want, ask Claude to learn the theme: it writes `THEME.md`, which stays blank until then.
+
 ### Manual setup
 
-Copy `CLAUDE.md`, `customizations.md` and the `THEME.md` for your Horizon version into your project folder, next to a `theme/` folder holding that version. Then fill in the `[agent: …]` placeholders; you can ask Claude to do it.
+Copy `CLAUDE.md`, `customizations.md` and the `THEME.md` for your Horizon version into your project folder, next to a `theme/` folder holding that version. Then fill in the `[agent: …]` placeholders; you can ask Claude to do it. For a live site, copy the two files from `live-site/`, add an empty `THEME.md`, and fill in the placeholders, including the copy to edit.
 
 ## Versions
 
