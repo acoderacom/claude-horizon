@@ -42,8 +42,9 @@ Copy `CLAUDE.md`, `customizations.md` and the `THEME.md` for your Horizon versio
 
 ```json
 {
-  "current": "4.2.0",
+  "current": "4.4.0",
   "versions": {
+    "4.4.0": { "status": "supported", "horizonCommit": "b2b74b0ade1ca0bf9a22b60aad5df2b49c20cd7a" },
     "4.2.0": { "status": "supported", "horizonCommit": "f9aef27cd24723119fca896eea43bdeda9961022" }
   }
 }
