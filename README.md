@@ -24,7 +24,7 @@ npx -y @acodera/shopify-admin-mcp@latest setup
 
 It reads `versions.json`, asks for your store and credentials, checks them, and compares the store's live theme with the supported versions. On a match, it downloads that Horizon version into `./theme`, writes `CLAUDE.md`, `THEME.md` and `customizations.md` with the placeholders filled in, and writes `.mcp.json` with the settings `CLAUDE.md` expects: live theme writes, uploads from `./uploads`, and the Shopify Dev MCP.
 
-If the live theme is older, newer or not Horizon, setup says which version to switch to and stops without writing `.mcp.json`. Since the Shopify theme store only installs the newest Horizon, it offers to save an upload-ready `horizon-<version>.zip` for **Online Store → Themes → Add theme → Upload zip file**.
+If the live theme is older, newer or not Horizon, setup says which version to switch to, saves an upload-ready `horizon-<version>.zip` in the folder (the Shopify theme store only installs the newest Horizon) for **Online Store → Themes → Add theme → Upload zip file**, and waits: once you've uploaded and published it, choose **Check the live theme again** and setup goes on with the answers you already gave. Cancelling leaves `.mcp.json` unchanged.
 
 Running it again keeps `customizations.md` and your own changes to `CLAUDE.md`, and asks before replacing `theme/` or `THEME.md`.
 
@@ -42,8 +42,9 @@ Copy `CLAUDE.md`, `customizations.md` and the `THEME.md` for your Horizon versio
 
 ```json
 {
-  "current": "4.2.0",
+  "current": "4.4.0",
   "versions": {
+    "4.4.0": { "status": "supported", "horizonCommit": "b2b74b0ade1ca0bf9a22b60aad5df2b49c20cd7a" },
     "4.2.0": { "status": "supported", "horizonCommit": "f9aef27cd24723119fca896eea43bdeda9961022" }
   }
 }
